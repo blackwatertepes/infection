@@ -1,0 +1,26 @@
+<form action="/" method="GET">
+  <fieldset>
+    <label for="NODE_INFECTION_RATE">NODE INFECTION RATE</label>
+    <input type="textfield" name="NODE_INFECTION_RATE" value="<%= @NODE_INFECTION_RATE %>" />
+  </fieldset>
+  <fieldset>
+    <label for="NODE_CANCER_RATE">NODE CANCER RATE</label>
+    <input type="textfield" name="NODE_CANCER_RATE" value="<%= @NODE_CANCER_RATE %>" />
+  </fieldset>
+  <fieldset>
+    <label for="NODE_INFECTION_REDUCTION">NODE INFECTION REDUCTION</label>
+    <input type="textfield" name="NODE_INFECTION_REDUCTION" value="<%= @NODE_INFECTION_REDUCTION %>" />
+  </fieldset>
+  <fieldset>
+    <label for="EDGE_SPEED">EDGE SPEED</label>
+    <input type="textfield" name="EDGE_SPEED" value="<%= @EDGE_SPEED %>" />
+  </fieldset>
+  <fieldset>
+    <label for="EDGE_SPEED_MULTI">EDGE SPEED MULTI</label>
+    <input type="textfield" name="EDGE_SPEED_MULTI" value="<%= @EDGE_SPEED_MULTI %>" />
+  </fieldset>
+  <input type="submit" value="Submit" />
+  <button type="reset" onclick="window.location = '/'">Reset!</button>
+</form>
+
+<canvas id="board" width="1000" height="750"></canvas>
