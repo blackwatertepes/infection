@@ -1,3 +1,7 @@
+# TODOS
+
+# Edge speed should decrease when number of traveling edges increases
+# Create tutorials
 
 $ ->
   NODE_INFECTION_RATE = parseFloat($('input[name=NODE_INFECTION_RATE]').val(), 10)
