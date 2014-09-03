@@ -63,6 +63,8 @@ $ ->
       @cancer_size = 0
       @base_color = 'rgba(255, 255, 255, .5)'
       @selected_color = 'rgba(255, 0, 0, .5)'
+      @base_stroke = 'rgb(255, 255, 255)'
+      @infected_stroke = 'rgb(255, 0, 0)'
       @selected = false
       @infected = false
       @dead = false
@@ -70,7 +72,7 @@ $ ->
 
     draw: ->
       super
-      @bg.graphics.clear().beginStroke('white').setStrokeStyle(3).beginFill(@color()).drawCircle(0, 0, @size)
+      @bg.graphics.clear().beginStroke(@stroke()).setStrokeStyle(3).beginFill(@color()).drawCircle(0, 0, @size)
       @energy_sprite.graphics.clear().beginFill('rgba(255, 0, 0, .5)').drawCircle(0, 0, @energy) if @energy_sprite
       @cancer.graphics.clear().beginFill('rgba(0, 0, 0, .5)').drawCircle(0, 0, @cancer_size) if @cancer
 
@@ -127,6 +129,9 @@ $ ->
     color: ->
       if @selected then @selected_color else @base_color
 
+    stroke: ->
+      if @infected then @infected_stroke else @base_stroke
+
     beginDeath: ->
       @cancer = new createjs.Shape()
       @addChild(@cancer)
@@ -134,8 +139,8 @@ $ ->
 
     reduceEnergy: ->
       # TODO: Create ENERGY_REDUCTION_RATE
-      if @energy > 1
-        @energy -= .05
+      if @energy > @cancer_size
+        @energy -= .02
       else
         @silence()
 
@@ -154,6 +159,7 @@ $ ->
       @dead = true
 
     silence: ->
+      @energy = 0
       @removeListeners()
 
     intersectsLine: (sx, sy, ex, ey) ->
