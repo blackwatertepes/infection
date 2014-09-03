@@ -57,9 +57,9 @@ $ ->
       @btn = new createjs.Shape()
       @btn.graphics.beginFill('rgba(0, 0, 0, .01)').drawCircle(0, 0, @size)
       @addChild(@btn)
-      @infection = null
+      @energy_sprite = null
       @cancer = null
-      @infection_percentage = 0
+      @energy = 0
       @cancer_size = 0
       @base_color = 'rgba(255, 255, 255, .5)'
       @selected_color = 'rgba(255, 0, 0, .5)'
@@ -71,7 +71,7 @@ $ ->
     draw: ->
       super
       @bg.graphics.clear().beginStroke('white').setStrokeStyle(3).beginFill(@color()).drawCircle(0, 0, @size)
-      @infection.graphics.clear().beginFill('rgba(255, 0, 0, .5)').drawCircle(0, 0, @infectionSize()) if @infection
+      @energy_sprite.graphics.clear().beginFill('rgba(255, 0, 0, .5)').drawCircle(0, 0, @energy) if @energy_sprite
       @cancer.graphics.clear().beginFill('rgba(0, 0, 0, .5)').drawCircle(0, 0, @cancer_size) if @cancer
 
     addListeners: ->
@@ -114,23 +114,15 @@ $ ->
       @selected = false
 
     infect: ->
+      @energy = @size
       @addListeners()
-      @infection = new createjs.Shape()
-      @addChild(@infection)
-      @infection_int = setInterval(@spreadInfection, 20)
+      @energy_sprite = new createjs.Shape()
+      @addChild(@energy_sprite)
       @infected = true
       @beginDeath()
 
-    spreadInfection: =>
-      if @infection_percentage < 1
-        @infection_percentage += NODE_INFECTION_RATE
-
-    reduceInfection: ->
-      @infection_percentage -= NODE_INFECTION_REDUCTION / @size
-      @infection_percentage = 0 if @infection_percentage < 0
-
-    infectionSize: ->
-      @infection_percentage * @size
+    # TODO: Remove node infection rate
+    # TODO: Remove node infection reduction
 
     color: ->
       if @selected then @selected_color else @base_color
@@ -140,6 +132,16 @@ $ ->
       @addChild(@cancer)
       @cancer_int = setInterval(@spreadCancer, 20)
 
+    reduceEnergy: ->
+      # TODO: Create ENERGY_REDUCTION_RATE
+      if @energy > 1
+        @energy -= .05
+      else
+        @silence()
+
+    hasEnergy: ->
+      @energy > 1
+
     spreadCancer: =>
       if @cancer_size < @size
         @cancer_size += NODE_CANCER_RATE
@@ -148,8 +150,11 @@ $ ->
         clearInterval(@cancer_int)
 
     kill: ->
-      @removeListeners()
+      @silence()
       @dead = true
+
+    silence: ->
+      @removeListeners()
 
     intersectsLine: (sx, sy, ex, ey) ->
       @distFromLine(sx, sy, ex, ey) < @size
@@ -224,21 +229,18 @@ $ ->
     beginJourney: ->
       @path = new createjs.Shape()
       @addChild(@path)
-      @start.reduceInfection()
       @int = setInterval @travel, 20
 
     travel: =>
-      # Dead
-      if @start.dead
-        clearInterval(@int)
-      else if @distance_traveled < @distance
+      if !@start.dead && @distance_traveled < @distance && @start.hasEnergy()
         # Traveling
         # TODO: Remove EDGE SPEED MULTI
         @distance_traveled += EDGE_SPEED #* @start.infection_percentage
+        @start.reduceEnergy()
       else
-        # Done
-        @connected = true
-        @end.infect()
+        if @distance_traveled >= @distance
+          @connected = true
+          @end.infect()
         clearInterval(@int)
 
     percentageComplete: ->
