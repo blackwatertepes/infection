@@ -61,7 +61,7 @@ $ ->
 
     draw: ->
       super
-      @bg.graphics.clear().beginStroke('rgb(0, 0, 0)').beginFill(@color()).drawCircle(0, 0, @size)
+      @bg.graphics.clear().beginStroke('white').setStrokeStyle(3).beginFill(@color()).drawCircle(0, 0, @size)
       @infection.graphics.clear().beginFill('rgba(255, 0, 0, .5)').drawCircle(0, 0, @infectionSize()) if @infection
       @cancer.graphics.clear().beginFill('rgba(0, 0, 0, .5)').drawCircle(0, 0, @cancer_size) if @cancer
 
@@ -155,8 +155,23 @@ $ ->
 
   stage = new Stage("board")
 
+  # Add background
+  for spec in [0..100]
+    shape = new createjs.Shape()
+    exp = 1
+    dist = Math.pow(Math.random() * Math.pow(Math.min(stage.width(), stage.height()) / 2, 1 / exp), exp)
+    dist_x = Math.random() * dist
+    dist_y = Math.sqrt(Math.pow(dist, 2) - Math.pow(dist_x, 2))
+    dist_x = dist_x * -1 if Math.random() > .5
+    dist_y = dist_y * -1 if Math.random() > .5
+    x = stage.width() / 2 + dist_x
+    y = stage.height() / 2 + dist_y
+    shape.graphics.beginFill('rgba(255, 255, 255, .1)').drawCircle(x, y, 1)
+    stage.addChild(shape)
+
+  # Add game nodes
   nodes = []
-  for node in [0..50]
+  for node in [0..20]
     size = 10 + Math.random() * 20
     x = Math.random() * (stage.width() - size * 2) + size
     y = Math.random() * (stage.height() - size * 2) + size
