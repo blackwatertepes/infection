@@ -125,11 +125,11 @@ $ ->
 
     draw: ->
       super
-      @bg.graphics.clear().beginStroke('rgba(0, 0, 0, .2)').moveTo(@start.x, @start.y).lineTo(@end.x, @end.y)
+      @bg.graphics.clear().beginStroke('rgba(255, 255, 255, .5)').moveTo(@start.x, @start.y).lineTo(@end.x, @end.y)
       if @path
         toX = @start.x + (@end.x - @start.x) * @percentageComplete()
         toY = @start.y + (@end.y - @start.y) * @percentageComplete()
-        @path.graphics.clear().beginStroke('rgb(255, 0, 0)').moveTo(@start.x, @start.y).lineTo(toX, toY)
+        @path.graphics.clear().beginStroke('rgba(255, 0, 0, .8)').moveTo(@start.x, @start.y).lineTo(toX, toY)
 
     beginJourney: ->
       @path = new createjs.Shape()
