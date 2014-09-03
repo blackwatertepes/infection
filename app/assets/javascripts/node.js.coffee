@@ -14,6 +14,7 @@ $ ->
     constructor: (id) ->
       @initialize(id)
       @enableMouseOver()
+      createjs.Ticker.addEventListener("tick", @)
 
     width: ->
       @canvas.width
@@ -21,24 +22,29 @@ $ ->
     height: ->
       @canvas.height
 
-    selectNode: (node) ->
-      if @current_node
-        # Deselecting infected node
-        if @current_node == node
-          @deselectCurrentNode()
-        # Selecting destination node
-        else if !node.infected
-          edge = new Edge(@current_node, node)
-          @addChild(edge)
-          @deselectCurrentNode()
-      else if node.infected && !node.dead
-        # Selecting infected node
-        @current_node = node
-        @current_node.select()
+  class Game extends createjs.Container
+    constructor: (stage) ->
+      @initialize()
+      @stage = stage
+      @nodes = []
+      for node in [0..20]
+        size = 10 + Math.random() * 20
+        x = Math.random() * (stage.width() - size * 2) + size
+        y = Math.random() * (stage.height() - size * 2) + size
+        node = new Node(x, y, size)
+        @addChild(node)
+        @nodes.push(node)
 
-    deselectCurrentNode: ->
-      @current_node.deselect()
-      @current_node = null
+      @nodes[0].infect()
+      @stage.addChild(@)
+      @stage.game = @
+
+    getNodesOnLine: (sx, sy, ex, ey) ->
+      nodes = []
+      for node in @nodes
+        if (node.intersectsLine(sx, sy, ex, ey))
+          nodes.push(node)
+      nodes
 
   class Node extends createjs.Container
     constructor: (x, y, size) ->
@@ -48,6 +54,9 @@ $ ->
       @size = size
       @bg = new createjs.Shape()
       @addChild(@bg)
+      @btn = new createjs.Shape()
+      @btn.graphics.beginFill('rgba(0, 0, 0, .01)').drawCircle(0, 0, @size)
+      @addChild(@btn)
       @infection = null
       @cancer = null
       @infection_percentage = 0
@@ -57,7 +66,7 @@ $ ->
       @selected = false
       @infected = false
       @dead = false
-      @addListeners()
+      @traj = null
 
     draw: ->
       super
@@ -66,10 +75,37 @@ $ ->
       @cancer.graphics.clear().beginFill('rgba(0, 0, 0, .5)').drawCircle(0, 0, @cancer_size) if @cancer
 
     addListeners: ->
-      @addEventListener('click', @onClick)
+      @btn.addEventListener('mousedown', @onMouseDown)
+      @btn.addEventListener('click', @onClick)
+
+    removeListeners: ->
+      @btn.removeEventListener('mousedown', @onMouseDown)
+      @btn.removeEventListener('click', @onClick)
+
+    onMouseDown: (e) =>
+      @select()
+      @btn.addEventListener('mouseout', @onMouseOut)
+      @traj = new Trajectory(@)
+      @getStage().addChild(@traj)
+      @traj_int = setInterval(@updateTraj, 20)
 
     onClick: (e) =>
-      @parent.selectNode(@)
+      @fire()
+
+    onMouseOut: (e) =>
+      @fire()
+
+    fire: ->
+      if @traj.target
+        edge = new Edge(@, @traj.target)
+        @getStage().game.addChild(edge)
+      @getStage().removeChild(@traj)
+      @btn.removeEventListener('mouseout', @onMouseOut)
+      clearInterval(@traj_int)
+      @deselect()
+
+    updateTraj: =>
+      @traj.update(@getStage().mouseX, @getStage().mouseY)
 
     select: ->
       @selected = true
@@ -78,6 +114,7 @@ $ ->
       @selected = false
 
     infect: ->
+      @addListeners()
       @infection = new createjs.Shape()
       @addChild(@infection)
       @infection_int = setInterval(@spreadInfection, 20)
@@ -107,12 +144,65 @@ $ ->
       if @cancer_size < @size
         @cancer_size += NODE_CANCER_RATE
       else
-        @dead = true
+        @kill()
         clearInterval(@cancer_int)
+
+    kill: ->
+      @removeListeners()
+      @dead = true
+
+    intersectsLine: (sx, sy, ex, ey) ->
+      @distFromLine(sx, sy, ex, ey) < @size
+
+    distFromLine: (sx, sy, ex, ey) ->
+      dist_from_start = @distFromPoint(sx, sy)
+      line_length = Math.sqrt(Math.pow(sx - ex, 2) + Math.pow(sy - ey, 2))
+      dist_per = dist_from_start / line_length
+      dist_x = (ex - sx) * dist_per
+      dist_y = (ey - sy) * dist_per
+      mx = sx + dist_x
+      my = sy + dist_y
+      @distFromPoint(mx, my)
+
+    distFromPoint: (x, y) ->
+      Math.sqrt(Math.pow(x - @x, 2) + Math.pow(y - @y, 2))
+
+  class Trajectory extends createjs.Shape
+    constructor: (start_node) ->
+      @initialize()
+      @start_node = start_node
+      @end_x = 0
+      @end_y = 0
+      @target = null
+
+    update: (x, y) ->
+      @end_x = (@start_node.x - x) * 100 + @start_node.x
+      @end_y = (@start_node.y - y) * 100 + @start_node.y
+      @graphics.clear().beginStroke('rgba(255, 255, 255, .1)').moveTo(@start_node.x, @start_node.y).lineTo(@end_x, @end_y)
+      @setTarget()
+
+    setTarget: ->
+      @target = null
+      nodes = @getStage().game.getNodesOnLine(@start_node.x, @start_node.y, @end_x, @end_y)
+      target_nodes = []
+      for node in nodes
+        if node != @start_node
+          target_nodes.push(node)
+      if target_nodes.length > 0
+        @target = @getClosestNode(target_nodes)
+
+    getClosestNode: (nodes) ->
+      closest = nodes[0]
+      for node in nodes
+        closest = node if (@getDist(node) < @getDist(closest))
+      closest
+       
+    getDist: (node) -> 
+      Math.sqrt(Math.pow(@start_node.x - node.x, 2) + Math.pow(@start_node.y - node.y, 2))
 
   class Edge extends createjs.Container
     constructor: (start, end) ->
-      @.initialize()
+      @initialize()
       @start = start
       @end = end
       @bg = new createjs.Shape()
@@ -143,7 +233,8 @@ $ ->
         clearInterval(@int)
       else if @distance_traveled < @distance
         # Traveling
-        @distance_traveled += EDGE_SPEED * (@start.infection_percentage * EDGE_SPEED_MULTI)
+        # TODO: Remove EDGE SPEED MULTI
+        @distance_traveled += EDGE_SPEED #* @start.infection_percentage
       else
         # Done
         @connected = true
@@ -169,16 +260,4 @@ $ ->
     shape.graphics.beginFill('rgba(255, 255, 255, .1)').drawCircle(x, y, 1)
     stage.addChild(shape)
 
-  # Add game nodes
-  nodes = []
-  for node in [0..20]
-    size = 10 + Math.random() * 20
-    x = Math.random() * (stage.width() - size * 2) + size
-    y = Math.random() * (stage.height() - size * 2) + size
-    node = new Node(x, y, size)
-    stage.addChild(node)
-    nodes.push(node)
-
-  createjs.Ticker.addEventListener("tick", stage)
-
-  nodes[0].infect()
+  game = new Game(stage)
