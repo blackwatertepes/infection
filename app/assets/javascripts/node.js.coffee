@@ -191,23 +191,25 @@ $ ->
     distFromPoint: (x, y) ->
       Math.sqrt(Math.pow(x - @x, 2) + Math.pow(y - @y, 2))
 
-  class Trajectory extends createjs.Shape
+  class Trajectory extends Container
     constructor: (start_node) ->
-      @initialize()
+      super
       @start_node = start_node
       @end_x = 0
       @end_y = 0
       @target = null
+      @line = new createjs.Shape()
+      @addChild(@line)
 
     update: (x, y) ->
       @end_x = (@start_node.x - x) * 100 + @start_node.x
       @end_y = (@start_node.y - y) * 100 + @start_node.y
-      @graphics.clear().beginStroke('rgba(255, 255, 255, .1)').moveTo(@start_node.x, @start_node.y).lineTo(@end_x, @end_y)
+      @line.graphics.clear().beginStroke('rgba(255, 255, 255, .1)').moveTo(@start_node.x, @start_node.y).lineTo(@end_x, @end_y)
       @setTarget()
 
     setTarget: ->
       @target = null
-      nodes = @getStage().game.getNodesOnLine(@start_node.x, @start_node.y, @end_x, @end_y)
+      nodes = @game().getNodesOnLine(@start_node.x, @start_node.y, @end_x, @end_y)
       target_nodes = []
       for node in nodes
         if node != @start_node
