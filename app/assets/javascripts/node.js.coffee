@@ -22,9 +22,22 @@ $ ->
     height: ->
       @canvas.height
 
-  class Game extends createjs.Container
-    constructor: (stage) ->
+  class Container extends createjs.Container
+    constructor: ->
       @initialize()
+
+    game: ->
+      @getStage().game
+
+    stageX: ->
+      @getStage().mouseX
+
+    stageY: ->
+      @getStage().mouseY
+
+  class Game extends Container
+    constructor: (stage) ->
+      super
       @stage = stage
       @nodes = []
       for node in [0..20]
@@ -46,9 +59,9 @@ $ ->
           nodes.push(node)
       nodes
 
-  class Node extends createjs.Container
+  class Node extends Container
     constructor: (x, y, size) ->
-      @initialize()
+      super
       @x = x
       @y = y
       @size = size
@@ -88,7 +101,7 @@ $ ->
       @select()
       @btn.addEventListener('mouseout', @onMouseOut)
       @traj = new Trajectory(@)
-      @getStage().addChild(@traj)
+      @game().addChild(@traj)
       @traj_int = setInterval(@updateTraj, 20)
 
     onClick: (e) =>
@@ -100,14 +113,14 @@ $ ->
     fire: ->
       if @traj.target
         edge = new Edge(@, @traj.target)
-        @getStage().game.addChild(edge)
-      @getStage().removeChild(@traj)
+        @game().addChild(edge)
+      @game().removeChild(@traj)
       @btn.removeEventListener('mouseout', @onMouseOut)
       clearInterval(@traj_int)
       @deselect()
 
     updateTraj: =>
-      @traj.update(@getStage().mouseX, @getStage().mouseY)
+      @traj.update(@stageX(), @stageY())
 
     select: ->
       @selected = true
@@ -211,9 +224,9 @@ $ ->
     getDist: (node) -> 
       Math.sqrt(Math.pow(@start_node.x - node.x, 2) + Math.pow(@start_node.y - node.y, 2))
 
-  class Edge extends createjs.Container
+  class Edge extends Container
     constructor: (start, end) ->
-      @initialize()
+      super
       @start = start
       @end = end
       @bg = new createjs.Shape()
