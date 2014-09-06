@@ -1,27 +1,26 @@
 window.infection = window.infection || {}
 
 class infection.Edge extends infection.Container
-  constructor: (start, end) ->
+  constructor: (start, end, traj = null) ->
     super
     @start = start
     @end = end
+    @traj = traj
     @bg = new createjs.Shape()
     @addChild(@bg)
     @path = null
-    @distance = Math.sqrt(Math.pow(@start.x - @end.x, 2) + Math.pow(@start.y - @end.y, 2))
     @distance_traveled = 0
     @connected = false
-    start_per = @start.size / @distance
-    dist_x = @start.x - @end.x
-    dist_y = @start.y - @end.y
-    @startX = @start.x - (dist_x * start_per)
-    @startY = @start.y - (dist_y * start_per)
-    @distance = Math.sqrt(Math.pow(@startX - @end.x, 2) + Math.pow(@startY - @end.y, 2))
-    end_per = @end.size / @distance
-    dist_x = @startX - @end.x
-    dist_y = @startY - @end.y
-    @endX = @end.x + (dist_x * end_per)
-    @endY = @end.y + (dist_y * end_per)
+    if @traj
+      @startX = @traj.start().x
+      @startY = @traj.start().y
+      @endX = @traj.end().x
+      @endY = @traj.end().y
+    else
+      @startX = @start.x
+      @startY = @start.y
+      @endX = @end.x
+      @endY = @end.y
     @distance = Math.sqrt(Math.pow(@startX - @endX, 2) + Math.pow(@startY - @endY, 2))
     @beginJourney()
 

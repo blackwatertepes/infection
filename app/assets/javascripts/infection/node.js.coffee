@@ -55,7 +55,7 @@ class infection.Node extends infection.Container
   fire: ->
     @btn.scaleX = 1
     if @traj.target
-      edge = new infection.Edge(@, @traj.target)
+      edge = new infection.Edge(@, @traj.target, @traj)
       @game().addChild(edge)
     @game().removeChild(@traj)
     @btn.removeEventListener('mouseout', @onMouseOut)
