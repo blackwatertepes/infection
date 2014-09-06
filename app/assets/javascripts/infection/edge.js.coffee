@@ -11,15 +11,27 @@ class infection.Edge extends infection.Container
     @distance = Math.sqrt(Math.pow(@start.x - @end.x, 2) + Math.pow(@start.y - @end.y, 2))
     @distance_traveled = 0
     @connected = false
+    start_per = @start.size / @distance
+    dist_x = @start.x - @end.x
+    dist_y = @start.y - @end.y
+    @startX = @start.x - (dist_x * start_per)
+    @startY = @start.y - (dist_y * start_per)
+    @distance = Math.sqrt(Math.pow(@startX - @end.x, 2) + Math.pow(@startY - @end.y, 2))
+    end_per = @end.size / @distance
+    dist_x = @startX - @end.x
+    dist_y = @startY - @end.y
+    @endX = @end.x + (dist_x * end_per)
+    @endY = @end.y + (dist_y * end_per)
+    @distance = Math.sqrt(Math.pow(@startX - @endX, 2) + Math.pow(@startY - @endY, 2))
     @beginJourney()
 
   draw: ->
     super
-    @bg.graphics.clear().beginStroke('rgba(255, 255, 255, .5)').moveTo(@start.x, @start.y).lineTo(@end.x, @end.y)
+    @bg.graphics.clear().beginStroke('rgba(255, 255, 255, .01)').moveTo(@startX, @startY).lineTo(@endX, @endY)
     if @path
-      toX = @start.x + (@end.x - @start.x) * @percentageComplete()
-      toY = @start.y + (@end.y - @start.y) * @percentageComplete()
-      @path.graphics.clear().beginStroke('rgba(255, 0, 0, .8)').moveTo(@start.x, @start.y).lineTo(toX, toY)
+      toX = @startX + (@endX - @startX) * @percentageComplete()
+      toY = @startY + (@endY - @startY) * @percentageComplete()
+      @path.graphics.clear().beginStroke('rgba(255, 0, 0, .8)').moveTo(@startX, @startY).lineTo(toX, toY)
 
   beginJourney: ->
     @path = new createjs.Shape()
