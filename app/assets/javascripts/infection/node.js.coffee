@@ -9,7 +9,7 @@ class infection.Node extends infection.Container
     @bg = new createjs.Shape()
     @addChild(@bg)
     @btn = new createjs.Shape()
-    @btn.graphics.beginFill('rgba(0, 0, 0, .01)').drawCircle(0, 0, @size)
+    @btn.graphics.beginFill('rgba(0, 0, 0, .5)').drawCircle(0, 0, @size)
     @addChild(@btn)
     @energy_sprite = null
     @cancer = null
@@ -44,6 +44,7 @@ class infection.Node extends infection.Container
     @traj = new infection.Trajectory(@)
     @game().addChild(@traj)
     @traj_int = setInterval(@updateTraj, 20)
+    @btn.scaleX = @getStage().width
 
   onClick: (e) =>
     @fire()
@@ -52,6 +53,7 @@ class infection.Node extends infection.Container
     @fire()
 
   fire: ->
+    @btn.scaleX = 1
     if @traj.target
       edge = new infection.Edge(@, @traj.target)
       @game().addChild(edge)
