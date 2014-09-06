@@ -14,11 +14,5 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require easeljs-0.7.1.min
-//= require stage
-//= require container
-//= require game
-//= require node
-//= require edge
-//= require trajectory
 //= require_tree .
 
