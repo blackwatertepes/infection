@@ -17,25 +17,15 @@ class infection.Trajectory extends infection.Container
     @end_y = (@start_node.y - y) * 10 + @start_node.y
     @line.graphics.clear().beginStroke('rgba(255, 255, 255, .1)').moveTo(@start_node.x, @start_node.y).lineTo(@end_x, @end_y)
     if @setTarget()
-      orig_distance = @dist(@start_node, {x: @end_x, y: @end_y})
       @distance = @dist(@start_node, @target)
-      per = @distance / orig_distance
-      dist_x = @start_node.x - @end_x
-      dist_y = @start_node.y - @end_y
-      @end = {x: @start_node.x - (dist_x * per), y: @start_node.y - (dist_y * per)}
-      # point = @point_on_line(@start_node, {x: @end_x, y: @end_y}, @distance)
+      @end = @point_on_line(@start_node, {x: @end_x, y: @end_y}, @distance)
       @start = {x: @start_node.x, y: @start_node.y}
-      start_per = @start_node.size / @distance
-      dist_x = @start_node.x - @end.x
-      dist_y = @start_node.y - @end.y
-      @start = {x: @start_node.x - (dist_x * start_per), y: @start_node.y - (dist_y * start_per)}
+      @start = @point_on_line(@end, @start, @distance - @start_node.size)
       @distance = @dist(@start, @end)
       offset = @dist(@end, @target)
       end_dist = Math.sqrt(Math.pow(@target.size, 2) - Math.pow((offset), 2))
-      end_per = end_dist / @distance
-      dist_x = @start.x - @end.x
-      dist_y = @start.y - @end.y
-      @end = {x: @end.x + (dist_x * end_per), y: @end.y + (dist_y * end_per)}
+      dist = @distance - end_dist
+      @end = @point_on_line(@start, @end, dist)
       @distance = @dist(@start, @end)
     else
       @distance = null
