@@ -1,10 +1,10 @@
 window.infection = window.infection || {}
 
 class infection.Edge extends infection.Container
-  constructor: (start, end, traj = null) ->
+  constructor: (start_node, end_node, traj = null) ->
     super
-    @start = start
-    @end = end
+    @start_node = start_node
+    @end_node = end_node
     @traj = traj
     @bg = new createjs.Shape()
     @addChild(@bg)
@@ -12,25 +12,21 @@ class infection.Edge extends infection.Container
     @distance_traveled = 0
     @connected = false
     if @traj
-      @startX = @traj.start.x
-      @startY = @traj.start.y
-      @endX = @traj.end.x
-      @endY = @traj.end.y
+      @start = @traj.start
+      @end = @traj.end
     else
-      @startX = @start.x
-      @startY = @start.y
-      @endX = @end.x
-      @endY = @end.y
-    @distance = Math.sqrt(Math.pow(@startX - @endX, 2) + Math.pow(@startY - @endY, 2))
+      @start = @start_node
+      @end = @end_node
+    @distance = Math.sqrt(Math.pow(@start.x - @end.x, 2) + Math.pow(@start.y - @end.y, 2))
     @beginJourney()
 
   draw: ->
     super
-    @bg.graphics.clear().beginStroke('rgba(255, 255, 255, .01)').moveTo(@startX, @startY).lineTo(@endX, @endY)
+    @bg.graphics.clear().beginStroke('rgba(255, 255, 255, .01)').moveTo(@start.x, @start.y).lineTo(@end.x, @end.y)
     if @path
-      toX = @startX + (@endX - @startX) * @percentageComplete()
-      toY = @startY + (@endY - @startY) * @percentageComplete()
-      @path.graphics.clear().beginStroke('rgba(255, 0, 0, .8)').moveTo(@startX, @startY).lineTo(toX, toY)
+      toX = @start.x + (@end.x - @start.x) * @percentageComplete()
+      toY = @start.y + (@end.y - @start.y) * @percentageComplete()
+      @path.graphics.clear().beginStroke('rgba(255, 0, 0, .8)').moveTo(@start.x, @start.y).lineTo(toX, toY)
 
   beginJourney: ->
     @path = new createjs.Shape()
@@ -38,14 +34,14 @@ class infection.Edge extends infection.Container
     @int = setInterval @travel, 20
 
   travel: =>
-    if !@start.dead && @distance_traveled < @distance && @start.hasEnergy()
+    if !@start_node.dead && @distance_traveled < @distance && @start_node.hasEnergy()
       # Traveling
-      @distance_traveled += infection.EDGE_SPEED #* @start.infection_percentage
-      @start.reduceEnergy()
+      @distance_traveled += infection.EDGE_SPEED
+      @start_node.reduceEnergy()
     else
       if @distance_traveled >= @distance
         @connected = true
-        @end.infect()
+        @end_node.infect()
       clearInterval(@int)
 
   percentageComplete: ->
