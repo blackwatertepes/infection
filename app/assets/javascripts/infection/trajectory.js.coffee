@@ -4,21 +4,19 @@ class infection.Trajectory extends infection.Container
   constructor: (start_node) ->
     super
     @start_node = start_node
-    @end_x = 0
-    @end_y = 0
+    @start = @start_node
+    @end = {x: 0, y: 0}
+    @distance = 0
     @target = null
     @line = new createjs.Shape()
     @addChild(@line)
-    @start = @start_node
-    @end = @end_node
 
   update: (x, y) ->
-    @end_x = (@start_node.x - x) * 10 + @start_node.x
-    @end_y = (@start_node.y - y) * 10 + @start_node.y
-    @line.graphics.clear().beginStroke('rgba(255, 255, 255, .1)').moveTo(@start_node.x, @start_node.y).lineTo(@end_x, @end_y)
+    @end = {x: (@start_node.x - x) * 10 + @start_node.x, y: (@start_node.y - y) * 10 + @start_node.y}
+    @line.graphics.clear().beginStroke('rgba(255, 255, 255, .1)').moveTo(@start_node.x, @start_node.y).lineTo(@end.x, @end.y)
     if @setTarget()
       @distance = @dist(@start_node, @target)
-      @end = @point_on_line(@start_node, {x: @end_x, y: @end_y}, @distance)
+      @end = @point_on_line(@start_node, {x: @end.x, y: @end.y}, @distance)
       @start = @point_on_line(@end, @start, @distance - @start_node.size)
       @distance = @dist(@start, @end)
       offset = @dist(@end, @target)
@@ -26,13 +24,11 @@ class infection.Trajectory extends infection.Container
       @end = @point_on_line(@start, @end, @distance - end_dist)
       @distance = @dist(@start, @end)
     else
-      @distance = null
       @start = @start_node
-      @end = @end_node
 
   setTarget: ->
     @target = null
-    nodes = @game().getNodesOnLine(@start_node.x, @start_node.y, @end_x, @end_y)
+    nodes = @game().getNodesOnLine(@start_node.x, @start_node.y, @end.x, @end.y)
     target_nodes = []
     for node in nodes
       if node != @start_node
