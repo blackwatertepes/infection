@@ -12,10 +12,10 @@ class infection.Edge extends infection.Container
     @distance_traveled = 0
     @connected = false
     if @traj
-      @startX = @traj.start().x
-      @startY = @traj.start().y
-      @endX = @traj.end().x
-      @endY = @traj.end().y
+      @startX = @traj.start.x
+      @startY = @traj.start.y
+      @endX = @traj.end.x
+      @endY = @traj.end.y
     else
       @startX = @start.x
       @startY = @start.y
