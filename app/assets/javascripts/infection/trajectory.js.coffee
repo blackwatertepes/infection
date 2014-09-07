@@ -9,8 +9,8 @@ class infection.Trajectory extends infection.Container
     @target = null
     @line = new createjs.Shape()
     @addChild(@line)
-    @start = null
-    @end = null
+    @start = @start_node
+    @end = @end_node
 
   update: (x, y) ->
     @end_x = (@start_node.x - x) * 10 + @start_node.x
@@ -19,18 +19,16 @@ class infection.Trajectory extends infection.Container
     if @setTarget()
       @distance = @dist(@start_node, @target)
       @end = @point_on_line(@start_node, {x: @end_x, y: @end_y}, @distance)
-      @start = {x: @start_node.x, y: @start_node.y}
       @start = @point_on_line(@end, @start, @distance - @start_node.size)
       @distance = @dist(@start, @end)
       offset = @dist(@end, @target)
       end_dist = Math.sqrt(Math.pow(@target.size, 2) - Math.pow((offset), 2))
-      dist = @distance - end_dist
-      @end = @point_on_line(@start, @end, dist)
+      @end = @point_on_line(@start, @end, @distance - end_dist)
       @distance = @dist(@start, @end)
     else
       @distance = null
-      @start = null
-      @end = null
+      @start = @start_node
+      @end = @end_node
 
   setTarget: ->
     @target = null
