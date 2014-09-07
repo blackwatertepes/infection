@@ -44,7 +44,6 @@ class infection.Node extends infection.Container
     @traj = new infection.Trajectory(@)
     @game().addChild(@traj)
     @traj_int = setInterval(@updateTraj, 20)
-    @btn.scaleX = @getStage().width
 
   onClick: (e) =>
     @fire()
@@ -53,7 +52,6 @@ class infection.Node extends infection.Container
     @fire()
 
   fire: ->
-    @btn.scaleX = 1
     if @traj.target
       edge = new infection.Edge(@, @traj.target, @traj)
       @game().addChild(edge)
