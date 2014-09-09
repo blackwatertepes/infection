@@ -16,9 +16,7 @@ class infection.Node extends infection.Container
     @energy = 0
     @cancer_size = 0
     @base_color = 'rgba(255, 255, 255, .5)'
-    @selected_color = 'rgba(255, 0, 0, .5)'
     @base_stroke = 'rgb(255, 255, 255)'
-    @infected_stroke = 'rgb(255, 0, 0)'
     @selected = false
     @infected = false
     @dead = false
@@ -26,9 +24,9 @@ class infection.Node extends infection.Container
 
   draw: ->
     super
-    @bg.graphics.clear().beginStroke(@stroke()).setStrokeStyle(3).beginFill(@color()).drawCircle(0, 0, @size)
-    @energy_sprite.graphics.clear().beginFill('rgba(255, 0, 0, .5)').drawCircle(0, 0, @energy) if @energy_sprite
-    @cancer.graphics.clear().beginFill('rgba(0, 0, 0, .5)').drawCircle(0, 0, @cancer_size) if @cancer
+    @bg.graphics.clear().beginStroke(@stroke()).setStrokeStyle(3).beginFill(@base_color).drawCircle(0, 0, @size)
+    @energy_sprite.graphics.clear().beginFill(@energy_color()).drawCircle(0, 0, @energy) if @energy_sprite
+    @cancer.graphics.clear().beginFill(@user.dark_color).drawCircle(0, 0, @cancer_size) if @cancer
 
   addListeners: ->
     @btn.addEventListener('mousedown', @onMouseDown)
@@ -53,7 +51,7 @@ class infection.Node extends infection.Container
 
   fire: ->
     if @traj.target
-      edge = new infection.Edge(@, @traj.target, @traj)
+      edge = new infection.Edge(@, @traj.target, @traj, @user)
       @game().addChild(edge)
     @game().removeChild(@traj)
     @btn.removeEventListener('mouseout', @onMouseOut)
@@ -69,7 +67,8 @@ class infection.Node extends infection.Container
   deselect: ->
     @selected = false
 
-  infect: ->
+  infect: (user) ->
+    @user = user
     @energy = @size
     @addListeners()
     @energy_sprite = new createjs.Shape()
@@ -77,11 +76,11 @@ class infection.Node extends infection.Container
     @infected = true
     @beginDeath()
 
-  color: ->
-    if @selected then @selected_color else @base_color
+  energy_color: ->
+    if @infected then @user.color else @base_color
 
   stroke: ->
-    if @infected then @infected_stroke else @base_stroke
+    if @infected then @user.light_color else @base_stroke
 
   beginDeath: ->
     @cancer = new createjs.Shape()

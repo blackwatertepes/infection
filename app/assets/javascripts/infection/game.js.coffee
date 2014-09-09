@@ -13,7 +13,14 @@ class infection.Game extends infection.Container
       @addChild(node)
       @nodes.push(node)
 
-    @nodes[0].infect()
+    users = []
+    for color in ["rgb(255, 0, 0)", "rgb(0, 128, 128)"]
+      user = new infection.User(color)
+      users.push(user)
+      
+    @nodes[0].infect(users[0])
+    @nodes[1].infect(users[1])
+
     @stage.addChild(@)
     @stage.game = @
 

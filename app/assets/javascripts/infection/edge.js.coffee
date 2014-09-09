@@ -1,11 +1,12 @@
 window.infection = window.infection || {}
 
 class infection.Edge extends infection.Container
-  constructor: (start_node, end_node, traj = null) ->
+  constructor: (start_node, end_node, traj = null, user) ->
     super
     @start_node = start_node
     @end_node = end_node
     @traj = traj
+    @user = user
     @bg = new createjs.Shape()
     @addChild(@bg)
     @path = null
@@ -22,11 +23,11 @@ class infection.Edge extends infection.Container
 
   draw: ->
     super
-    @bg.graphics.clear().beginStroke('rgba(255, 255, 255, .01)').moveTo(@start.x, @start.y).lineTo(@end.x, @end.y)
+    @bg.graphics.clear().beginStroke('rgba(255, 255, 255, .1)').moveTo(@start.x, @start.y).lineTo(@end.x, @end.y)
     if @path
       toX = @start.x + (@end.x - @start.x) * @percentageComplete()
       toY = @start.y + (@end.y - @start.y) * @percentageComplete()
-      @path.graphics.clear().beginStroke('rgba(255, 0, 0, .8)').moveTo(@start.x, @start.y).lineTo(toX, toY)
+      @path.graphics.clear().beginStroke(@user.color).moveTo(@start.x, @start.y).lineTo(toX, toY)
 
   beginJourney: ->
     @path = new createjs.Shape()
@@ -41,7 +42,7 @@ class infection.Edge extends infection.Container
     else
       if @distance_traveled >= @distance
         @connected = true
-        @end_node.infect()
+        @end_node.infect(@user)
       clearInterval(@int)
 
   percentageComplete: ->
