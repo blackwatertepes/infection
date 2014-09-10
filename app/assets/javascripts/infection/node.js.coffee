@@ -52,7 +52,7 @@ class infection.Node extends infection.Container
   fire: ->
     if @traj.target
       edge = new infection.Edge(@, @traj.target, @traj, @user)
-      @game().addChild(edge)
+      @game().addEdge(edge)
     @game().removeChild(@traj)
     @btn.removeEventListener('mouseout', @onMouseOut)
     clearInterval(@traj_int)
@@ -74,7 +74,7 @@ class infection.Node extends infection.Container
     @energy_sprite = new createjs.Shape()
     @addChild(@energy_sprite)
     @infected = true
-    @beginDeath()
+    # @beginDeath() # TODO: Uncomment
 
   energy_color: ->
     if @infected then @user.color else @base_color

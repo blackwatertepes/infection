@@ -29,6 +29,9 @@ class infection.Edge extends infection.Container
       toY = @start.y + (@end.y - @start.y) * @percentageComplete()
       @path.graphics.clear().beginStroke(@user.color).moveTo(@start.x, @start.y).lineTo(toX, toY)
 
+  kill: ->
+    clearInterval @int
+
   beginJourney: ->
     @path = new createjs.Shape()
     @addChild(@path)
@@ -44,6 +47,39 @@ class infection.Edge extends infection.Container
         @connected = true
         @end_node.infect(@user)
       clearInterval(@int)
+      console.log @intersectingLines()
 
   percentageComplete: ->
     @distance_traveled / @distance
+
+  intersectingLines: ->
+    @game().getIntersectingLines(@)
+
+  intersects: (edge) ->
+    return false if edge == @
+    # The point at which the lines would eventually intersect
+    x = (@b() - edge.b()) / (@m() - edge.m())
+    y = @m() * x - @b()
+    @pointInBounds(-x, -y) && edge.pointInBounds(-x, -y)
+
+  pointInBounds: (x, y) ->
+    dist_x = Math.abs(@run())
+    dist_y = Math.abs(@rise())
+    x_within = Math.abs(@start.x - x) < dist_x * 1.2 && Math.abs(@end.x - x) < dist_x * 1.2
+    y_within = Math.abs(@start.y - y) < dist_y * 1.2 && Math.abs(@end.y - y) < dist_y * 1.2
+    x_within && y_within
+
+  rise: ->
+    @start.y - @end.y
+
+  run: ->
+    @end.x - @start.x
+
+  m: ->
+    @rise() / @run()
+
+  b: ->
+    @start.y - @start.x / @run() * @rise()
+
+  eq: ->
+    "#{@m()}x + #{@b()}"

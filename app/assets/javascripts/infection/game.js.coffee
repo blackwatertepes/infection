@@ -5,6 +5,7 @@ class infection.Game extends infection.Container
     super
     @stage = stage
     @nodes = []
+    @edges = []
     for node in [0..20]
       size = 10 + Math.random() * 20
       x = Math.random() * (stage.width() - size * 2) + size
@@ -24,9 +25,20 @@ class infection.Game extends infection.Container
     @stage.addChild(@)
     @stage.game = @
 
+  addEdge: (edge) ->
+    @edges.push(edge)
+    @addChild(edge)
+
   getNodesOnLine: (sx, sy, ex, ey) ->
     nodes = []
     for node in @nodes
       if (node.intersectsLine(sx, sy, ex, ey))
         nodes.push(node)
     nodes
+
+  getIntersectingLines: (edge) ->
+    edges = []
+    for ed in @edges
+      if edge.intersects(ed)
+        edges.push(ed)
+    edges
