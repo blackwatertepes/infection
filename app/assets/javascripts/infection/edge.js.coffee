@@ -1,7 +1,7 @@
 window.infection = window.infection || {}
 
 class infection.Edge extends infection.Container
-  constructor: (start_node, end_node, traj = null, user) ->
+  constructor: (start_node, end_node, traj = null, user = null) ->
     super
     @start_node = start_node
     @end_node = end_node
@@ -24,7 +24,7 @@ class infection.Edge extends infection.Container
   draw: ->
     super
     @bg.graphics.clear().beginStroke('rgba(255, 255, 255, .1)').moveTo(@start.x, @start.y).lineTo(@end.x, @end.y)
-    if @path
+    if @path && @user
       toX = @start.x + (@end.x - @start.x) * @percentageComplete()
       toY = @start.y + (@end.y - @start.y) * @percentageComplete()
       @path.graphics.clear().beginStroke(@user.color).moveTo(@start.x, @start.y).lineTo(toX, toY)
@@ -42,12 +42,12 @@ class infection.Edge extends infection.Container
       # Traveling
       @distance_traveled += infection.EDGE_SPEED
       @start_node.reduceEnergy()
+      @kill() if @intersectingLines().length > 0
     else
       if @distance_traveled >= @distance
         @connected = true
         @end_node.infect(@user)
       clearInterval(@int)
-      console.log @intersectingLines()
 
   percentageComplete: ->
     @distance_traveled / @distance
@@ -65,12 +65,12 @@ class infection.Edge extends infection.Container
   pointInBounds: (x, y) ->
     dist_x = Math.abs(@run())
     dist_y = Math.abs(@rise())
-    x_within = Math.abs(@start.x - x) < dist_x * 1.2 && Math.abs(@end.x - x) < dist_x * 1.2
-    y_within = Math.abs(@start.y - y) < dist_y * 1.2 && Math.abs(@end.y - y) < dist_y * 1.2
+    x_within = Math.abs(@start.x - x) < dist_x && Math.abs(@end.x - x) < dist_x
+    y_within = Math.abs(@start.y - y) < dist_y && Math.abs(@end.y - y) < dist_y
     x_within && y_within
 
   rise: ->
-    @start.y - @end.y
+    @end.y - @start.y
 
   run: ->
     @end.x - @start.x

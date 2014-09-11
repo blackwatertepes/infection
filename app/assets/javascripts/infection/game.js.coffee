@@ -4,10 +4,13 @@ class infection.Game extends infection.Container
   constructor: (stage) ->
     super
     @stage = stage
+    @btn = new createjs.Shape()
+    @btn.graphics.beginFill('rgba(0, 0, 0, .05)').drawRect(0, 0, @stage.width(), @stage.height())
+    @addChild(@btn)
     @nodes = []
     @edges = []
-    for node in [0..20]
-      size = 10 + Math.random() * 20
+    for node in [0..10]
+      size = 20 + Math.random() * 20
       x = Math.random() * (stage.width() - size * 2) + size
       y = Math.random() * (stage.height() - size * 2) + size
       node = new infection.Node(x, y, size)
@@ -24,6 +27,21 @@ class infection.Game extends infection.Container
 
     @stage.addChild(@)
     @stage.game = @
+
+    @currentNode = null
+
+    # @addEventListener('click', @onClickHandler)
+
+  onClickHandler: (e) =>
+    node = new infection.Node(@stageX(), @stageY(), 10)
+    @addChild(node)
+
+    if @currentNode
+      edge = new infection.Edge(@currentNode, node)
+      @addEdge(edge)
+      @currentNode = null
+    else
+      @currentNode = node
 
   addEdge: (edge) ->
     @edges.push(edge)
