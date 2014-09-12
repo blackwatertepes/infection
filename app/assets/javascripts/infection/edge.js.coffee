@@ -52,4 +52,4 @@ class infection.Edge extends infection.Container
 
   intersectsLine: (edge) ->
     return false if edge == @
-    edge.bg.intersects(@bg)
+    edge.path.intersects(@bg)
