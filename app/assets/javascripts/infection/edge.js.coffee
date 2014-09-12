@@ -50,31 +50,6 @@ class infection.Edge extends infection.Container
   intersectingLines: ->
     @game().getIntersectingLines(@)
 
-  intersects: (edge) ->
+  intersectsLine: (edge) ->
     return false if edge == @
-    # The point at which the lines would eventually intersect
-    x = (@b() - edge.b()) / (@m() - edge.m())
-    y = @m() * x - @b()
-    @pointInBounds(-x, -y) && edge.pointInBounds(-x, -y)
-
-  pointInBounds: (x, y) ->
-    dist_x = Math.abs(@run())
-    dist_y = Math.abs(@rise())
-    x_within = Math.abs(@start.x - x) < dist_x && Math.abs(@end.x - x) < dist_x
-    y_within = Math.abs(@start.y - y) < dist_y && Math.abs(@end.y - y) < dist_y
-    x_within && y_within
-
-  rise: ->
-    @end.y - @start.y
-
-  run: ->
-    @end.x - @start.x
-
-  m: ->
-    @rise() / @run()
-
-  b: ->
-    @start.y - @start.x / @run() * @rise()
-
-  eq: ->
-    "#{@m()}x + #{@b()}"
+    edge.bg.intersects(@bg)

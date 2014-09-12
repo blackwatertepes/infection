@@ -57,6 +57,6 @@ class infection.Game extends infection.Container
   getIntersectingLines: (edge) ->
     edges = []
     for ed in @edges
-      if edge.intersects(ed)
+      if edge.intersectsLine(ed)
         edges.push(ed)
     edges
