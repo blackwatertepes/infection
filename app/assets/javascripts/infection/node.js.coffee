@@ -6,11 +6,6 @@ class infection.Node extends infection.Container
     @x = x
     @y = y
     @size = size
-    @bg = new createjs.Shape()
-    @addChild(@bg)
-    @btn = new createjs.Shape()
-    @btn.graphics.beginFill('rgba(0, 0, 0, .01)').drawCircle(0, 0, @size)
-    @addChild(@btn)
     @energy_sprite = null
     @cancer = null
     @energy = 0
@@ -21,10 +16,14 @@ class infection.Node extends infection.Container
     @infected = false
     @dead = false
     @traj = null
+    @bg = new infection.Circle(0, 0, @size, @base_color, @base_stroke, 3)
+    @addChild(@bg)
+    @btn = new createjs.Shape()
+    @btn.graphics.beginFill('rgba(0, 0, 0, .01)').drawCircle(0, 0, @size)
+    @addChild(@btn)
 
   draw: ->
     super
-    @bg.graphics.clear().beginStroke(@stroke()).setStrokeStyle(3).beginFill(@base_color).drawCircle(0, 0, @size)
     @energy_sprite.graphics.clear().beginFill(@energy_color()).drawCircle(0, 0, @energy) if @energy_sprite
     @cancer.graphics.clear().beginFill(@user.dark_color).drawCircle(0, 0, @cancer_size) if @cancer
 
@@ -79,13 +78,11 @@ class infection.Node extends infection.Container
     @energy_sprite = new createjs.Shape()
     @addChild(@energy_sprite)
     @infected = true
+    @bg.strokeColor = @user.light_color
     # @beginDeath() # TODO: Uncomment
 
   energy_color: ->
     if @infected then @user.color else @base_color
-
-  stroke: ->
-    if @infected then @user.light_color else @base_stroke
 
   beginDeath: ->
     @cancer = new createjs.Shape()
