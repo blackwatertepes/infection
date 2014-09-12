@@ -50,6 +50,6 @@ class infection.Edge extends infection.Container
   intersectingLines: ->
     @game().getIntersectingLines(@)
 
-  intersectsLine: (edge) ->
+  intersectsEdge: (edge) ->
     return false if edge == @
-    edge.path.intersects(@bg)
+    edge.path.intersectsLine(@bg)

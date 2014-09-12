@@ -14,7 +14,7 @@ class infection.Line extends createjs.Container
     super
     @bg.graphics.clear().beginStroke(@color).setStrokeStyle(@stroke).moveTo(@start.x, @start.y).lineTo(@end.x, @end.y)
 
-  intersects: (line) ->
+  intersectsLine: (line) ->
     # The point at which the lines would eventually intersect
     x = (@b() - line.b()) / (@m() - line.m())
     y = @m() * x - @b()
