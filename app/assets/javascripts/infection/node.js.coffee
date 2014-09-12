@@ -114,17 +114,18 @@ class infection.Node extends infection.Container
     @energy = 0
     @removeListeners()
 
-  intersectsLine: (sx, sy, ex, ey) ->
-    @distFromLine(sx, sy, ex, ey) < @size
+  intersectsEdge: (start, end) ->
+    @distFromLine(start, end) < @size
 
-  distFromLine: (sx, sy, ex, ey) ->
-    dist_from_start = @distFromPoint(sx, sy)
-    line_length = Math.sqrt(Math.pow(sx - ex, 2) + Math.pow(sy - ey, 2))
+  distFromLine: (start, end) ->
+    dist_from_start = @distFromPoint(start.x, start.y)
+    line_length = Math.sqrt(Math.pow(start.x - end.x, 2) + Math.pow(start.y - end.y, 2))
     dist_per = dist_from_start / line_length
-    dist_x = (ex - sx) * dist_per
-    dist_y = (ey - sy) * dist_per
-    mx = sx + dist_x
-    my = sy + dist_y
+    dist_x = (end.x - start.x) * dist_per
+    dist_y = (end.y - start.y) * dist_per
+    mx = start.x + dist_x
+    my = start.y + dist_y
+    console.log @distFromPoint(mx, my)
     @distFromPoint(mx, my)
 
   distFromPoint: (x, y) ->

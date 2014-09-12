@@ -27,7 +27,7 @@ class infection.Trajectory extends infection.Container
 
   setTarget: ->
     @target = null
-    nodes = @game().getNodesOnLine(@start_node.x, @start_node.y, @end.x, @end.y)
+    nodes = @game().getNodesOnLine({x: @start_node.x, y: @start_node.y}, {x: @end.x, y: @end.y})
     target_nodes = []
     for node in nodes
       if node != @start_node
