@@ -63,6 +63,7 @@ class infection.Node extends infection.Container
 
   select: ->
     @selected = true
+    @game().bringToTop(@)
 
   deselect: ->
     @selected = false
