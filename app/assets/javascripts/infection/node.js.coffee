@@ -9,7 +9,7 @@ class infection.Node extends infection.Container
     @bg = new createjs.Shape()
     @addChild(@bg)
     @btn = new createjs.Shape()
-    @btn.graphics.beginFill('rgba(0, 0, 0, .5)').drawCircle(0, 0, @size)
+    @btn.graphics.beginFill('rgba(0, 0, 0, .01)').drawCircle(0, 0, @size)
     @addChild(@btn)
     @energy_sprite = null
     @cancer = null
@@ -64,9 +64,13 @@ class infection.Node extends infection.Container
   select: ->
     @selected = true
     @game().bringToTop(@)
+    @btn.scaleX = 1000
+    @btn.scaleY = 1000
 
   deselect: ->
     @selected = false
+    @btn.scaleX = 1
+    @btn.scaleY = 1
 
   infect: (user) ->
     @user = user
