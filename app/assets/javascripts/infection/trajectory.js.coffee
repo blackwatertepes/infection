@@ -35,6 +35,8 @@ class infection.Trajectory extends infection.Container
     if target_nodes.length > 0
       @target = @getClosestNode(target_nodes)
 
+  # TODO: Calculate with intersect distance, instead of arc distance (angle)
+
   getClosestNode: (nodes) ->
     closest = nodes[0]
     for node in nodes
