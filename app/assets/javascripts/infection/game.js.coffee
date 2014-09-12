@@ -9,7 +9,7 @@ class infection.Game extends infection.Container
     @addChild(@btn)
     @nodes = []
     @edges = []
-    for node in [0..100]
+    for node in [0..10]
       size = 20 + Math.random() * 20
       x = Math.random() * (stage.width() - size * 2) + size
       y = Math.random() * (stage.height() - size * 2) + size

@@ -7,8 +7,6 @@ class infection.Edge extends infection.Container
     @end_node = end_node
     @traj = traj
     @user = user
-    @bg = new createjs.Shape()
-    @addChild(@bg)
     @path = null
     @distance_traveled = 0
     @connected = false
@@ -18,26 +16,23 @@ class infection.Edge extends infection.Container
     else
       @start = @start_node
       @end = @end_node
+    @bg = new infection.Line(@start, @end, 'rgba(255, 255, 255, .2)')
+    @addChild(@bg)
     @distance = Math.sqrt(Math.pow(@start.x - @end.x, 2) + Math.pow(@start.y - @end.y, 2))
     @beginJourney()
-
-  draw: ->
-    super
-    @bg.graphics.clear().beginStroke('rgba(255, 255, 255, .1)').moveTo(@start.x, @start.y).lineTo(@end.x, @end.y)
-    if @path && @user
-      toX = @start.x + (@end.x - @start.x) * @percentageComplete()
-      toY = @start.y + (@end.y - @start.y) * @percentageComplete()
-      @path.graphics.clear().beginStroke(@user.color).moveTo(@start.x, @start.y).lineTo(toX, toY)
 
   kill: ->
     clearInterval @int
 
   beginJourney: ->
-    @path = new createjs.Shape()
+    @path = new infection.Line(@start, @start, @user.color)
     @addChild(@path)
     @int = setInterval @travel, 20
 
   travel: =>
+    toX = @start.x + (@end.x - @start.x) * @percentageComplete()
+    toY = @start.y + (@end.y - @start.y) * @percentageComplete()
+    @path.end = {x: toX, y: toY}
     if !@start_node.dead && @distance_traveled < @distance && @start_node.hasEnergy()
       # Traveling
       @distance_traveled += infection.EDGE_SPEED
