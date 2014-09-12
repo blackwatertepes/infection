@@ -8,12 +8,11 @@ class infection.Trajectory extends infection.Container
     @end = {x: 0, y: 0}
     @distance = 0
     @target = null
-    @line = new createjs.Shape()
-    @addChild(@line)
+    @bg = new infection.Line(@start_node, @end, 'rgba(255, 255, 255, .1)')
+    @addChild(@bg)
 
   update: (x, y) ->
-    @end = {x: (@start_node.x - x) * 10 + @start_node.x, y: (@start_node.y - y) * 10 + @start_node.y}
-    @line.graphics.clear().beginStroke('rgba(255, 255, 255, .1)').moveTo(@start_node.x, @start_node.y).lineTo(@end.x, @end.y)
+    @end = @bg.end = {x: (@start_node.x - x) * 10 + @start_node.x, y: (@start_node.y - y) * 10 + @start_node.y}
     if @setTarget()
       @distance = @dist(@start_node, @target)
       @end = @point_on_line(@start_node, {x: @end.x, y: @end.y}, @distance)
