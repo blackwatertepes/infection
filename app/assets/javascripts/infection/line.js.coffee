@@ -2,7 +2,7 @@ window.infection = window.infection || {}
 
 class infection.Line extends createjs.Container
   constructor: (start, end, color, stroke = 1) ->
-    @initialize()
+    super
     @start = start
     @end = end
     @color = color
