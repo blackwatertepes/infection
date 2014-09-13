@@ -5,7 +5,6 @@ class infection.Game extends infection.Container
     super
     @stage = stage
     @btn = new createjs.Shape()
-    @btn.graphics.beginFill('rgba(0, 0, 0, .05)').drawRect(0, 0, @stage.width(), @stage.height())
     @addChild(@btn)
     @nodes = []
     @edges = []
@@ -31,6 +30,10 @@ class infection.Game extends infection.Container
     @currentNode = null
 
     # @addEventListener('click', @onClickHandler)
+
+  draw: ->
+    super
+    @btn.graphics.clear().beginFill('rgba(0, 0, 0, .05)').drawRect(0, 0, @stage.width(), @stage.height())
 
   onClickHandler: (e) =>
     node = new infection.Node(@stageX(), @stageY(), 10)

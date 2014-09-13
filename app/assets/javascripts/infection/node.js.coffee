@@ -19,11 +19,11 @@ class infection.Node extends infection.Container
     @bg = new infection.Circle(0, 0, @size, @base_color, @base_stroke, 3)
     @addChild(@bg)
     @btn = new createjs.Shape()
-    @btn.graphics.beginFill('rgba(0, 0, 0, .01)').drawCircle(0, 0, @size)
     @addChild(@btn)
 
   draw: ->
     super
+    @btn.graphics.clear().beginFill('rgba(0, 0, 0, .01)').drawCircle(0, 0, @size)
     @energy_sprite.graphics.clear().beginFill(@energy_color()).drawCircle(0, 0, @energy) if @energy_sprite
     @cancer.graphics.clear().beginFill(@user.dark_color).drawCircle(0, 0, @cancer_size) if @cancer
 
@@ -125,7 +125,6 @@ class infection.Node extends infection.Container
     dist_y = (end.y - start.y) * dist_per
     mx = start.x + dist_x
     my = start.y + dist_y
-    console.log @distFromPoint(mx, my)
     @distFromPoint(mx, my)
 
   distFromPoint: (x, y) ->
