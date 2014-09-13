@@ -16,10 +16,10 @@ class infection.Trajectory extends infection.Container
     if @setTarget()
       @distance = @dist(@start_node, @target)
       @end = @point_on_line(@start_node, {x: @end.x, y: @end.y}, @distance)
-      @start = @point_on_line(@end, @start, @distance - @start_node.size)
+      @start = @point_on_line(@end, @start, @distance - @start_node.radius)
       @distance = @dist(@start, @end)
       offset = @dist(@end, @target)
-      end_dist = Math.sqrt(Math.pow(@target.size, 2) - Math.pow((offset), 2))
+      end_dist = Math.sqrt(Math.pow(@target.radius, 2) - Math.pow((offset), 2))
       @end = @point_on_line(@start, @end, @distance - end_dist)
       @distance = @dist(@start, @end)
     else
@@ -27,7 +27,7 @@ class infection.Trajectory extends infection.Container
 
   setTarget: ->
     @target = null
-    nodes = @game().getNodesOnLine({x: @start_node.x, y: @start_node.y}, {x: @end.x, y: @end.y})
+    nodes = @game().getNodesOnLine(@bg)
     target_nodes = []
     for node in nodes
       if node != @start_node

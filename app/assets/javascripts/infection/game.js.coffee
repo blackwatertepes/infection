@@ -50,10 +50,10 @@ class infection.Game extends infection.Container
     @edges.push(edge)
     @addChild(edge)
 
-  getNodesOnLine: (start, end) ->
+  getNodesOnLine: (line) ->
     nodes = []
     for node in @nodes
-      if (node.intersectsEdge(start, end))
+      if (node.intersectsEdge(line))
         nodes.push(node)
     nodes
 

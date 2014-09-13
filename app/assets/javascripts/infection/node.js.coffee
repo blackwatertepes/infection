@@ -1,11 +1,11 @@
 window.infection = window.infection || {}
 
 class infection.Node extends infection.Container
-  constructor: (x, y, size) ->
+  constructor: (x, y, radius) ->
     super
     @x = x
     @y = y
-    @size = size
+    @radius = radius
     @energy_sprite = null
     @cancer = null
     @energy = 0
@@ -16,14 +16,16 @@ class infection.Node extends infection.Container
     @infected = false
     @dead = false
     @traj = null
-    @bg = new infection.Circle(0, 0, @size, @base_color, @base_stroke, 3)
+    @bg = new infection.Circle(0, 0, @radius, @base_color, @base_stroke, 3)
     @addChild(@bg)
     @btn = new createjs.Shape()
     @addChild(@btn)
+    @line = new infection.Line({x: -@radius, y: 0}, {x: @radius, y: 0}, 'rgb(255, 255, 255)')
+    @addChild(@line)
 
   draw: ->
     super
-    @btn.graphics.clear().beginFill('rgba(0, 0, 0, .01)').drawCircle(0, 0, @size)
+    @btn.graphics.clear().beginFill('rgba(0, 0, 0, .01)').drawCircle(0, 0, @radius)
     @energy_sprite.graphics.clear().beginFill(@energy_color()).drawCircle(0, 0, @energy) if @energy_sprite
     @cancer.graphics.clear().beginFill(@user.dark_color).drawCircle(0, 0, @cancer_size) if @cancer
 
@@ -73,7 +75,7 @@ class infection.Node extends infection.Container
 
   infect: (user) ->
     @user = user
-    @energy = @size
+    @energy = @radius
     @addListeners()
     @energy_sprite = new createjs.Shape()
     @addChild(@energy_sprite)
@@ -100,7 +102,7 @@ class infection.Node extends infection.Container
     @energy > 1
 
   spreadCancer: =>
-    if @cancer_size < @size
+    if @cancer_size < @radius
       @cancer_size += infection.NODE_CANCER_RATE
     else
       @kill()
@@ -114,17 +116,25 @@ class infection.Node extends infection.Container
     @energy = 0
     @removeListeners()
 
-  intersectsEdge: (start, end) ->
-    @distFromLine(start, end) < @size
+  updateLine: (rise, run) ->
+    total = (Math.abs(rise) + Math.abs(run))
+    yp = rise / total
+    xp = run / total
+    @line.start = {x: xp * @radius, y: yp * @radius}
+    @line.end = {x: -xp * @radius, y: -yp * @radius}
 
-  distFromLine: (start, end) ->
-    dist_from_start = @distFromPoint(start.x, start.y)
-    line_length = Math.sqrt(Math.pow(start.x - end.x, 2) + Math.pow(start.y - end.y, 2))
+  intersectsEdge: (line) ->
+    @updateLine(line.run(), -line.rise())
+    @distFromLine(line) < @radius
+
+  distFromLine: (line) ->
+    dist_from_start = @distFromPoint(line.start.x, line.start.y)
+    line_length = Math.sqrt(Math.pow(line.start.x - line.end.x, 2) + Math.pow(line.start.y - line.end.y, 2))
     dist_per = dist_from_start / line_length
-    dist_x = (end.x - start.x) * dist_per
-    dist_y = (end.y - start.y) * dist_per
-    mx = start.x + dist_x
-    my = start.y + dist_y
+    dist_x = (line.end.x - line.start.x) * dist_per
+    dist_y = (line.end.y - line.start.y) * dist_per
+    mx = line.start.x + dist_x
+    my = line.start.y + dist_y
     @distFromPoint(mx, my)
 
   distFromPoint: (x, y) ->
