@@ -18,7 +18,7 @@ class infection.Edge extends infection.Container
     else
       @start = @start_node
       @end = @end_node
-    @bg = new infection.Line(@start, @end, 'rgba(255, 255, 255, .2)')
+    @bg = new infection.Line(@start, @end, 'rgba(255, 255, 255, .2)', infection.EDGE_WIDTH + 2)
     @addChild(@bg)
     @distance = Math.sqrt(Math.pow(@start.x - @end.x, 2) + Math.pow(@start.y - @end.y, 2))
     @beginJourney()
@@ -27,10 +27,10 @@ class infection.Edge extends infection.Container
     clearInterval @int
 
   beginJourney: ->
-    @pathTo = new infection.Line(@start, @start, @user.color)
+    @pathTo = new infection.Line(@start, @start, @user.color, infection.EDGE_WIDTH)
     @addChild(@pathTo)
     if @end_node.user
-      @pathFrom = new infection.Line(@end, @end, @end_node.user.color)
+      @pathFrom = new infection.Line(@end, @end, @end_node.user.color, infection.EDGE_WIDTH)
       @addChild(@pathFrom)
     @int = setInterval @travel, 20
 

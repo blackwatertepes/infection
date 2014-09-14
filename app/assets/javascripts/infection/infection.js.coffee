@@ -4,9 +4,10 @@
 # Create tutorials
 
 $ ->
-  infection.NODE_CANCER_RATE = 0.01
+  infection.NODE_CANCER_RATE = 0.02
   infection.EDGE_SPEED = 1.0
-  infection.ENERGY_REDUCTION_RATE = 0.02;
+  infection.ENERGY_REDUCTION_RATE = 0.02
+  infection.EDGE_WIDTH = 2
 
   stage = new infection.Stage("board")
 

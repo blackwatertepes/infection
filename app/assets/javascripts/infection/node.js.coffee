@@ -96,13 +96,13 @@ class infection.Node extends infection.Container
     @cancer_int = setInterval(@spreadCancer, 20)
 
   reduceEnergy: ->
-    if @energy > @cancer_size
+    if @energy > @cancer_size && @energy > 1
       @energy -= infection.ENERGY_REDUCTION_RATE
     else
       @kill()
 
   hasEnergy: ->
-    @energy > @cancer_size
+    @energy > @cancer_size && @energy > 1
 
   spreadCancer: =>
     if @cancer_size < @energy

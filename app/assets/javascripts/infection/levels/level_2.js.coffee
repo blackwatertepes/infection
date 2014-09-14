@@ -1,12 +1,17 @@
 window.infection = window.infection || {}
 
-class infection.Level_1_intro extends infection.Level
+class infection.Level_2_energy extends infection.Level
   constructor: (game) ->
     super(game)
 
+    infection.NODE_CANCER_RATE = 0.0
+    infection.EDGE_SPEED = 2
+    infection.ENERGY_REDUCTION_RATE = 0.1
+
     for node in [
-        {x: 300, y: 400, size: 100}
-        {x: 700, y: 400, size: 100}
+        {x: 200, y: 200, size: 30}
+        {x: 800, y: 600, size: 100}
+        {x: 800, y: 400, size: 50}
       ]
       node = new infection.Node(node.x, node.y, node.size)
       @game.addChild(node)
