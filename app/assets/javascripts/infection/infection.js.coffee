@@ -2,6 +2,7 @@
 
 # Improve grahics/animations
 # Create tutorials
+# Create AI
 
 $ ->
   infection.NODE_CANCER_RATE = 0.02

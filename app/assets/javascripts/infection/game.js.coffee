@@ -13,7 +13,7 @@ class infection.Game extends infection.Container
     @edges = []
     @users = []
 
-    @level = new infection.Level_2_energy(@)
+    @level = new infection.Level_9_the_block(@)
 
     @currentNode = null
 
