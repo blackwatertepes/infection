@@ -103,7 +103,7 @@ class infection.Node extends infection.Container
       @silence()
 
   hasEnergy: ->
-    @energy > 1
+    @energy > @cancer_size
 
   spreadCancer: =>
     if @cancer_size < @radius

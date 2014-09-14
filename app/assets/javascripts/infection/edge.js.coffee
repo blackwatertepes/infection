@@ -7,8 +7,10 @@ class infection.Edge extends infection.Container
     @end_node = end_node
     @traj = traj
     @user = user
-    @path = null
-    @distance_traveled = 0
+    @pathTo = null
+    @pathFrom = null
+    @to_distance = 0
+    @from_distance = 0
     @connected = false
     if @traj
       @start = @traj.start
@@ -25,31 +27,51 @@ class infection.Edge extends infection.Container
     clearInterval @int
 
   beginJourney: ->
-    @path = new infection.Line(@start, @start, @user.color)
-    @addChild(@path)
+    @pathTo = new infection.Line(@start, @start, @user.color)
+    @addChild(@pathTo)
+    if @end_node.user
+      @pathFrom = new infection.Line(@end, @end, @end_node.user.color)
+      @addChild(@pathFrom)
     @int = setInterval @travel, 20
 
   travel: =>
-    toX = @start.x + (@end.x - @start.x) * @percentageComplete()
-    toY = @start.y + (@end.y - @start.y) * @percentageComplete()
-    @path.end = {x: toX, y: toY}
-    if !@start_node.dead && @distance_traveled < @distance && @start_node.hasEnergy()
-      # Traveling
-      @distance_traveled += infection.EDGE_SPEED
-      @start_node.reduceEnergy()
-      @kill() if @intersectingLines().length > 0
-    else
-      if @distance_traveled >= @distance
-        @connected = true
-        @end_node.infect(@user)
-      clearInterval(@int)
+    toX = @start.x + (@end.x - @start.x) * @toPercentage()
+    toY = @start.y + (@end.y - @start.y) * @toPercentage()
+    @pathTo.end = {x: toX, y: toY}
+    if @pathFrom
+      fromX = @end.x + (@start.x - @end.x) * @fromPercentage()
+      fromY = @end.y + (@start.y - @end.y) * @fromPercentage()
+      @pathFrom.end = {x: fromX, y: fromY}
 
-  percentageComplete: ->
-    @distance_traveled / @distance
+    if @intersectingLines().length > 0 || @start_node.dead || @end_node.dead || @to_distance + @from_distance >= @distance
+      @kill()
+      console.log 'kill'
+      return false
+
+    if @start_node.hasEnergy() && @to_distance < @distance - @from_distance && !@end_node.infected
+      # Traveling to end
+      @to_distance += infection.EDGE_SPEED
+      @start_node.reduceEnergy()
+
+    if @end_node.hasEnergy() && @from_distance < @distance - @to_distance && !@start_node.dead
+      # Traveling from end
+      console.log 'drain'
+      @from_distance += infection.EDGE_SPEED
+      @end_node.reduceEnergy()
+    
+    if @to_distance >= @distance
+      @connected = true
+      @end_node.infect(@user)
+  
+  toPercentage: ->
+    @to_distance / @distance
+
+  fromPercentage: ->
+    @from_distance / @distance
 
   intersectingLines: ->
     @game().getIntersectingLines(@)
 
   intersectsEdge: (edge) ->
     return false if edge == @
-    edge.path.intersectsLine(@bg)
+    (edge.pathTo && edge.pathTo.intersectsLine(@bg)) || (edge.pathFrom && edge.pathFrom.intersectsLine(@bg))
