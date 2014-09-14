@@ -96,9 +96,8 @@ class infection.Node extends infection.Container
     @cancer_int = setInterval(@spreadCancer, 20)
 
   reduceEnergy: ->
-    # TODO: Create ENERGY_REDUCTION_RATE
     if @energy > @cancer_size
-      @energy -= .02
+      @energy -= infection.ENERGY_REDUCTION_RATE
     else
       @kill()
 

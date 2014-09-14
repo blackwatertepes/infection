@@ -1,12 +1,12 @@
 # TODOS
 
 # Improve grahics/animations
-# Add line intersections
 # Create tutorials
 
 $ ->
-  infection.NODE_CANCER_RATE = parseFloat($('input[name=NODE_CANCER_RATE]').val(), 10)
-  infection.EDGE_SPEED = parseFloat($('input[name=EDGE_SPEED]').val(), 10)
+  infection.NODE_CANCER_RATE = 0.01
+  infection.EDGE_SPEED = 1.0
+  infection.ENERGY_REDUCTION_RATE = 0.02;
 
   stage = new infection.Stage("board")
 
