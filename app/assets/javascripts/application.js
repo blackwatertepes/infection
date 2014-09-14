@@ -14,5 +14,6 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require easeljs-0.7.1.min
+//= require tweenjs-0.5.1.min
 //= require_tree .
 
