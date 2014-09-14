@@ -135,10 +135,24 @@ class infection.Node extends infection.Container
   intersectsEdge: (line) ->
     @updateLine(line.run(), -line.rise())
     @updateIntersect(line)
-    @distFromLine(line) < @radius
+    if @intersectInNode() && @intersectTargeted(line)
+      @intersect.scaleX = 2
+      @intersect.scaleY = 2
+      return true
+    else
+      @intersect.scaleX = 1
+      @intersect.scaleY = 1
+      return false
 
-  distFromLine: (line) ->
-    @distFromPoint(@intersect.x, @intersect.y)
+  intersectTargeted: (line) ->
+    line_dir_x = line.start.x - line.end.x
+    line_dir_y = line.start.y - line.end.y
+    inter_dir_x = line.start.x - @intersect.x
+    inter_dir_y = line.start.y - @intersect.y
+    line_dir_x * inter_dir_x > 0 && line_dir_y * inter_dir_y > 0
+
+  intersectInNode: ->
+    @distFromPoint(@intersect.x, @intersect.y) < @radius
 
   distFromPoint: (x, y) ->
     Math.sqrt(Math.pow(x - @x, 2) + Math.pow(y - @y, 2))

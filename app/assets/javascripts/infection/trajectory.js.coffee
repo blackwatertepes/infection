@@ -13,17 +13,16 @@ class infection.Trajectory extends infection.Container
 
   update: (x, y) ->
     @end = @bg.end = {x: (@start_node.x - x) * 10 + @start_node.x, y: (@start_node.y - y) * 10 + @start_node.y}
+    @start = @start_node
     if @setTarget()
-      @distance = @dist(@start_node, @target)
-      @end = @point_on_line(@start_node, {x: @end.x, y: @end.y}, @distance)
-      @start = @point_on_line(@end, @start, @distance - @start_node.radius)
-      @distance = @dist(@start, @end)
+      @end = @target.intersect
+      @distance = @dist(@start_node, @end)
       offset = @dist(@end, @target)
       end_dist = Math.sqrt(Math.pow(@target.radius, 2) - Math.pow((offset), 2))
       @end = @point_on_line(@start, @end, @distance - end_dist)
       @distance = @dist(@start, @end)
-    else
-      @start = @start_node
+      @start = @point_on_line(@start, @end, @start_node.radius)
+      @distance = @dist(@start, @end)
 
   setTarget: ->
     @target = null
@@ -34,8 +33,6 @@ class infection.Trajectory extends infection.Container
         target_nodes.push(node)
     if target_nodes.length > 0
       @target = @getClosestNode(target_nodes)
-
-  # TODO: Calculate with intersect distance, instead of arc distance (angle)
 
   getClosestNode: (nodes) ->
     closest = nodes[0]
