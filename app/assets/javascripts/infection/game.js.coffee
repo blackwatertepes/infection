@@ -4,6 +4,9 @@ class infection.Game extends infection.Container
   constructor: (stage) ->
     super
     @stage = stage
+    @stage.addChild(@)
+    @stage.game = @
+
     @btn = new createjs.Shape()
     @addChild(@btn)
     @nodes = []
@@ -15,6 +18,7 @@ class infection.Game extends infection.Container
       node = new infection.Node(x, y, size)
       @addChild(node)
       @nodes.push(node)
+      node.init()
 
     users = []
     for color in ["rgb(255, 0, 0)", "rgb(0, 128, 128)"]
@@ -23,9 +27,6 @@ class infection.Game extends infection.Container
       
     @nodes[0].infect(users[0])
     @nodes[1].infect(users[1])
-
-    @stage.addChild(@)
-    @stage.game = @
 
     @currentNode = null
 

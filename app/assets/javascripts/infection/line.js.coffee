@@ -16,9 +16,13 @@ class infection.Line extends createjs.Container
 
   intersectsLine: (line) ->
     # The point at which the lines would eventually intersect
+    point = @intersection(line)
+    @pointInBounds(-point.x, -point.y) && line.pointInBounds(-point.x, -point.y)
+
+  intersection: (line) ->
     x = (@b() - line.b()) / (@m() - line.m())
     y = @m() * x - @b()
-    @pointInBounds(-x, -y) && line.pointInBounds(-x, -y)
+    {x: x, y: y}
 
   pointInBounds: (x, y) ->
     dist_x = Math.abs(@run())

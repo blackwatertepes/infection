@@ -20,8 +20,12 @@ class infection.Node extends infection.Container
     @addChild(@bg)
     @btn = new createjs.Shape()
     @addChild(@btn)
-    @line = new infection.Line({x: -@radius, y: 0}, {x: @radius, y: 0}, 'rgb(255, 255, 255)')
-    @addChild(@line)
+
+  init: ->
+    @line = new infection.Line({x: @x - @radius, y: @y}, {x: @x + @radius, y: @y}, 'rgb(255, 255, 255)')
+    # @game().addChild(@line)
+    @intersect = new infection.Circle(@x, @y, 5, 'rgb(0, 0, 0)')
+    # @game().addChild(@intersect)
 
   draw: ->
     super
@@ -120,22 +124,21 @@ class infection.Node extends infection.Container
     total = (Math.abs(rise) + Math.abs(run))
     yp = rise / total
     xp = run / total
-    @line.start = {x: xp * @radius, y: yp * @radius}
-    @line.end = {x: -xp * @radius, y: -yp * @radius}
+    @line.start = {x: @x + xp * @radius, y: @y + yp * @radius}
+    @line.end = {x: @x - xp * @radius, y: @y - yp * @radius}
+
+  updateIntersect: (line) ->
+    point = @line.intersection(line)
+    @intersect.x = -point.x
+    @intersect.y = -point.y
 
   intersectsEdge: (line) ->
     @updateLine(line.run(), -line.rise())
+    @updateIntersect(line)
     @distFromLine(line) < @radius
 
   distFromLine: (line) ->
-    dist_from_start = @distFromPoint(line.start.x, line.start.y)
-    line_length = Math.sqrt(Math.pow(line.start.x - line.end.x, 2) + Math.pow(line.start.y - line.end.y, 2))
-    dist_per = dist_from_start / line_length
-    dist_x = (line.end.x - line.start.x) * dist_per
-    dist_y = (line.end.y - line.start.y) * dist_per
-    mx = line.start.x + dist_x
-    my = line.start.y + dist_y
-    @distFromPoint(mx, my)
+    @distFromPoint(@intersect.x, @intersect.y)
 
   distFromPoint: (x, y) ->
     Math.sqrt(Math.pow(x - @x, 2) + Math.pow(y - @y, 2))

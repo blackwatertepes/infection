@@ -14,4 +14,4 @@ class infection.Circle extends createjs.Container
 
   draw: ->
     super
-    @bg.graphics.clear().beginFill(@color).beginStroke(@strokeColor).setStrokeStyle(@stroke).drawCircle(@x, @y, @radius)
+    @bg.graphics.clear().beginFill(@color).beginStroke(@strokeColor).setStrokeStyle(@stroke).drawCircle(0, 0, @radius)
