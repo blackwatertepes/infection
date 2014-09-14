@@ -11,22 +11,9 @@ class infection.Game extends infection.Container
     @addChild(@btn)
     @nodes = []
     @edges = []
-    for node in [0..10]
-      size = 20 + Math.random() * 20
-      x = Math.random() * (stage.width() - size * 2) + size
-      y = Math.random() * (stage.height() - size * 2) + size
-      node = new infection.Node(x, y, size)
-      @addChild(node)
-      @nodes.push(node)
-      node.init()
+    @users = []
 
-    users = []
-    for color in ["rgb(255, 0, 0)", "rgb(0, 128, 128)"]
-      user = new infection.User(color)
-      users.push(user)
-      
-    @nodes[0].infect(users[0])
-    @nodes[1].infect(users[1])
+    @level = new infection.Level_1_intro(@)
 
     @currentNode = null
 
