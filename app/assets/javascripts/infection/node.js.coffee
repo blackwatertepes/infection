@@ -85,7 +85,7 @@ class infection.Node extends infection.Container
     @addChild(@energy_sprite)
     @infected = true
     @bg.strokeColor = @user.light_color
-    # @beginDeath() # TODO: Uncomment
+    @beginDeath()
 
   energy_color: ->
     if @infected then @user.color else @base_color
@@ -100,25 +100,21 @@ class infection.Node extends infection.Container
     if @energy > @cancer_size
       @energy -= .02
     else
-      @silence()
+      @kill()
 
   hasEnergy: ->
     @energy > @cancer_size
 
   spreadCancer: =>
-    if @cancer_size < @radius
+    if @cancer_size < @energy
       @cancer_size += infection.NODE_CANCER_RATE
     else
       @kill()
       clearInterval(@cancer_int)
 
   kill: ->
-    @silence()
-    @dead = true
-
-  silence: ->
-    @energy = 0
     @removeListeners()
+    @dead = true
 
   updateLine: (rise, run) ->
     total = (Math.abs(rise) + Math.abs(run))

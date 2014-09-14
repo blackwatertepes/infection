@@ -45,7 +45,6 @@ class infection.Edge extends infection.Container
 
     if @intersectingLines().length > 0 || @start_node.dead || @end_node.dead || @to_distance + @from_distance >= @distance
       @kill()
-      console.log 'kill'
       return false
 
     if @start_node.hasEnergy() && @to_distance < @distance - @from_distance && !@end_node.infected
@@ -55,7 +54,6 @@ class infection.Edge extends infection.Container
 
     if @end_node.hasEnergy() && @from_distance < @distance - @to_distance && !@start_node.dead
       # Traveling from end
-      console.log 'drain'
       @from_distance += infection.EDGE_SPEED
       @end_node.reduceEnergy()
     
