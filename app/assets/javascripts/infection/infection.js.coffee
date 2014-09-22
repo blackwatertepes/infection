@@ -2,7 +2,7 @@
 
 # Improve grahics/animations
 # Create tutorials
-# Create AI
+# Create AI <- PRIORITY
 
 $ ->
   infection.NODE_CANCER_RATE = 0.02

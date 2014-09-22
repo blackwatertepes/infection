@@ -18,6 +18,8 @@ class infection.Node extends infection.Container
     @traj = null
     @bg = new infection.Circle(0, 0, @radius, @base_color, @base_stroke, 3)
     @addChild(@bg)
+    @zone = new createjs.Shape()
+    @addChild(@zone)
     @btn = new createjs.Shape()
     @addChild(@btn)
 
@@ -32,6 +34,7 @@ class infection.Node extends infection.Container
     @btn.graphics.clear().beginFill('rgba(0, 0, 0, .01)').drawCircle(0, 0, @radius)
     @energy_sprite.graphics.clear().beginFill(@energy_color()).drawCircle(0, 0, @energy) if @energy_sprite
     @cancer.graphics.clear().beginFill(@user.dark_color).drawCircle(0, 0, @cancer_size) if @cancer
+    @zone.graphics.clear().beginStroke('rgba(255, 255, 255, .2)').drawCircle(0, 0, @zoneRadius()) if @energy_sprite
 
   addListeners: ->
     @btn.addEventListener('mousedown', @onMouseDown)
@@ -110,6 +113,9 @@ class infection.Node extends infection.Container
     else
       @kill()
       clearInterval(@cancer_int)
+
+  zoneRadius: ->
+    Math.max((@energy - @cancer_size) / (infection.ENERGY_REDUCTION_RATE + infection.NODE_CANCER_RATE), 1)
 
   kill: ->
     @removeListeners()
