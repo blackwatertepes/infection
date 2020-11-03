@@ -18,66 +18,107 @@ void main() {
 class Palette {
   static const PaletteEntry white = BasicPalette.white;
   static const PaletteEntry red = PaletteEntry(Color(0xFFFF0000));
-  static const PaletteEntry blue = PaletteEntry(Color(0xFF0000FF));
 }
 
-class Square extends PositionComponent with HasGameRef<MyGame> {
-  static const SPEED = 0.25;
+class Wall extends PositionComponent with HasGameRef<MyGame> {
+  Paint color = Palette.white.paint;
 
   @override
   void render(Canvas c) {
     prepareCanvas(c);
 
-    c.drawRect(Rect.fromLTWH(0, 0, width, height), Palette.white.paint);
-    c.drawRect(const Rect.fromLTWH(0, 0, 3, 3), Palette.red.paint);
-    c.drawRect(Rect.fromLTWH(width / 2, height / 2, 3, 3), Palette.blue.paint);
+    c.drawRect(Rect.fromLTWH(0, 0, width, height), color);
+  }
+}
+
+class Player extends PositionComponent with HasGameRef<MyGame> {
+  static const SPEED = 1.0;
+  Paint color = Palette.white.paint;
+
+  @override
+  void render(Canvas c) {
+    prepareCanvas(c);
+
+    c.drawRect(Rect.fromLTWH(0, 0, width, height), color);
   }
 
   @override
   void update(double t) {
     super.update(t);
-    angle += SPEED * t;
-    angle %= 2 * math.pi;
+    if (gameRef.go) {
+      double distX = (gameRef.destination.dx - x);
+      double distY = (gameRef.destination.dy - y);
+      double distXY = distX.abs() + distY.abs();
+      double newX = x + distX / distXY * SPEED;
+      double newY = y + distY / distXY * SPEED;
+
+      bool overlaps = false;
+      gameRef.components.forEach((c) {
+        if (c is Wall && !overlaps) {
+          overlaps = Rect.fromLTWH(newX - width / 2, newY - height / 2, width, height).overlaps(c.toRect());
+        }
+      });
+
+      if (!overlaps) {
+        x = newX;
+        y = newY;
+      }
+    }
   }
 
   @override
   void onMount() {
-    width = height = gameRef.squareSize;
     anchor = Anchor.center;
   }
 }
 
-class MyGame extends BaseGame with DoubleTapDetector, TapDetector {
-  final double squareSize = 128;
+class MyGame extends BaseGame with DoubleTapDetector, TapDetector, PanDetector {
   bool running = true;
+  Offset destination;
+  bool go = false;
 
   MyGame() {
-    add(Square()
-      ..x = 100
-      ..y = 100);
+    // Construct the board...
+    add(Wall()
+      ..x = 200
+      ..y = 200
+      ..width = 64
+      ..height = 64);
+
+    add(Wall()
+      ..x = 200
+      ..y = 500
+      ..width = 64
+      ..height = 64);
+    
+    // Add the player...
+    add(Player()
+      ..x = 200
+      ..y = 350
+      ..width = 16
+      ..height = 16
+      ..color = Palette.red.paint);
+  }
+
+  @override
+  void onTapDown(details) {
+    destination = details.localPosition;
+    go = true;
   }
 
   @override
   void onTapUp(details) {
-    final touchArea = Rect.fromCenter(
-      center: details.localPosition,
-      width: 20,
-      height: 20,
-    );
+    go = false;
+  }
 
-    bool handled = false;
-    components.forEach((c) {
-      if (c is PositionComponent && c.toRect().overlaps(touchArea)) {
-        handled = true;
-        markToRemove(c);
-      }
-    });
+  @override
+  void onPanEnd(details) {
+    go = false;
+  }
 
-    if (!handled) {
-      addLater(Square()
-        ..x = touchArea.left
-        ..y = touchArea.top);
-    }
+  @override
+  void onPanUpdate(details) {
+    destination = details.localPosition;
   }
 
   @override
