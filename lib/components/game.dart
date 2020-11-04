@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flame/gestures.dart';
@@ -91,6 +92,27 @@ class MyGame extends BaseGame with DoubleTapDetector, TapDetector, PanDetector {
       ..x = 210
       ..y = 350
       ..color = Palette.purple.paint);
+  }
+
+  @override
+  void update(double t) {
+    super.update(t);
+
+    // Make sure everyone has a task
+    List<Task> availableTasks = List();
+    components.forEach((task) {
+      if (task is Task && task.assignee == null) {
+        availableTasks.add(task);
+      }
+    });
+
+    components.forEach((player) {
+      if (player is Player && player.task == null) {
+        Task task = availableTasks.removeAt(math.Random().nextInt(availableTasks.length));
+        player.task = task;
+        task.assignee = player;
+      }
+    });
   }
 
   @override
