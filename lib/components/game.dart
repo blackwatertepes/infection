@@ -91,7 +91,8 @@ class MyGame extends BaseGame with DoubleTapDetector, TapDetector, PanDetector {
     add(Player()
       ..x = 210
       ..y = 350
-      ..color = Palette.purple.paint);
+      ..color = Palette.purple.paint
+      ..saboteur = true);
   }
 
   @override
@@ -99,18 +100,35 @@ class MyGame extends BaseGame with DoubleTapDetector, TapDetector, PanDetector {
     super.update(t);
 
     // Make sure everyone has a task
-    List<Task> availableTasks = List();
+    List<Task> uncompletedTasks = List();
+    List<Task> completedTasks = List();
     components.forEach((task) {
       if (task is Task && task.assignee == null) {
-        availableTasks.add(task);
+        if (task.complete()) {
+          completedTasks.add(task);
+        } else {
+          uncompletedTasks.add(task);
+        }
       }
     });
 
     components.forEach((player) {
       if (player is Player && player.task == null) {
-        Task task = availableTasks.removeAt(math.Random().nextInt(availableTasks.length));
-        player.task = task;
-        task.assignee = player;
+        Task task;
+        if (player.saboteur) {
+          if (completedTasks.length > 0) {
+            task = completedTasks.removeAt(math.Random().nextInt(completedTasks.length));
+          }
+        } else {
+          if (uncompletedTasks.length > 0) {
+            task = uncompletedTasks.removeAt(math.Random().nextInt(uncompletedTasks.length));
+          }
+        }
+
+        if (task != null) {
+          player.task = task;
+          task.assignee = player;
+        }
       }
     });
   }

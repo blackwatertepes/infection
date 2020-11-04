@@ -16,6 +16,7 @@ class Player extends PositionComponent with HasGameRef<MyGame> {
   static const DIST_TO_TASK = 20;
   Paint color = Palette.white.paint;
   Task task;
+  bool saboteur = false;
   bool ai = true; // The Player will play itself
 
   @override
@@ -70,7 +71,11 @@ class Player extends PositionComponent with HasGameRef<MyGame> {
       double distXY = math.sqrt(math.pow(distX.abs(), 2) + math.pow(distY.abs(), 2));
 
       if (distXY < DIST_TO_TASK) {
-        task.work();
+        if (saboteur) {
+          task.unwork();
+        } else {
+          task.work();
+        }
       }
     }
   }
