@@ -17,6 +17,9 @@ class Player extends PositionComponent with HasGameRef<MyGame> {
   void render(Canvas c) {
     prepareCanvas(c);
 
+    width = 8;
+    height = 8;
+
     c.drawRect(Rect.fromLTWH(0, 0, width, height), color);
   }
 

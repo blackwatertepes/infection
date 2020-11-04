@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import 'package:infection/components/palette.dart';
 import 'package:infection/components/player.dart';
+import 'package:infection/components/task.dart';
 import 'package:infection/components/wall.dart';
 
 class MyGame extends BaseGame with DoubleTapDetector, TapDetector, PanDetector {
@@ -16,24 +17,80 @@ class MyGame extends BaseGame with DoubleTapDetector, TapDetector, PanDetector {
   MyGame() {
     // Construct the board...
     add(Wall()
-      ..x = 200
-      ..y = 200
-      ..width = 64
-      ..height = 64);
+      ..x = 0
+      ..y = 0
+      ..width = 500
+      ..height = 200);
 
     add(Wall()
-      ..x = 200
+      ..x = 0
       ..y = 500
-      ..width = 64
-      ..height = 64);
-    
-    // Add the player...
+      ..width = 500
+      ..height = 200);
+
+    // Top
+    add(Task()
+      ..x = 200
+      ..y = 250);
+
+    // Top Left
+    add(Task()
+      ..x = 130
+      ..y = 280);
+
+    // Left
+    add(Task()
+      ..x = 100
+      ..y = 350);
+
+    // Bottom Left
+    add(Task()
+      ..x = 130
+      ..y = 420);
+
+    // Bottom
+    add(Task()
+      ..x = 200
+      ..y = 450);
+
+    // Bottom Right
+    add(Task()
+      ..x = 270
+      ..y = 420);
+
+    // Right
+    add(Task()
+      ..x = 300
+      ..y = 350);
+
+    // Top Right
+    add(Task()
+      ..x = 270
+      ..y = 280);
+
+    // Top
     add(Player()
       ..x = 200
-      ..y = 350
-      ..width = 16
-      ..height = 16
+      ..y = 340
       ..color = Palette.red.paint);
+
+    // Left
+    add(Player()
+      ..x = 190
+      ..y = 350
+      ..color = Palette.blue.paint);
+
+    // Bottom
+    add(Player()
+      ..x = 200
+      ..y = 360
+      ..color = Palette.yellow.paint);
+
+    // Right
+    add(Player()
+      ..x = 210
+      ..y = 350
+      ..color = Palette.purple.paint);
   }
 
   @override
